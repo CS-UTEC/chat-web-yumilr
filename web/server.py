@@ -3,6 +3,7 @@ from database import connector
 from model import entities
 import json
 import time
+import datetime
 
 db = connector.Manager()
 engine = db.createEngine()
@@ -22,14 +23,23 @@ def index():
 @app.route('/authenticate', methods=['POST'])
 def authenticate():
     msg = json.loads(request.data)
-    #dummy validation
-    if msg['username'] == msg['password'] :
+    db_session = db.getSession(engine)
+    user = db_session.query(entities.User).filter(entities.User.username == msg['username'], entities.User.password == msg['password']).first()
+    # .first(): bota el 1ero que cumpla las condiciones del filtro
+    #query: consultar en base de datos
+    #print(user)
+    if user:
         r_msg = {'msg':'Welcome'}
         json_msg = json.dumps(r_msg)
         return Response(json_msg, status=200, mimetype='application/json');
+    #dummy validation
+    # if msg['username'] == msg['password'] :
+        # r_msg = {'msg':'Welcome'}
+        # json_msg = json.dumps(r_msg)
+        # return Response(json_msg, status=200, mimetype='application/json');
     r_msg = {'msg':'Failed'}
     json_msg = json.dumps(r_msg)
-    return Response(json_msg, status=401, mimetype='application/json')
+    return Response(json_msg, status=401, mimetype='application/json')#jquery valida el 401 como error, y por ello mata el programa
 
 #CRUD users
 @app.route('/users', methods = ['POST'])
@@ -100,17 +110,20 @@ def current_user():
     return Response(json.dumps(user, cls = connector.AlchemyEncoder), mimetype = 'application/json')
 
 #CRUD messages
-@app.route('/message', methods = ['POST'])
+@app.route('/messages', methods = ['POST'])
 def create_message():
     c = json.loads(request.form['values'])
+    format = '%d/%m/%Y' # The format
+    datetime_str = datetime.datetime.strptime(c['sent_on'], format)
+    print(datetime_str)
     message = entities.Message(
         content=c['content'],
-        sent_on=c['sent_on'],
+        sent_on=datetime_str,
         user_from_id=c['user_from_id'],
         user_to_id=c['user_to_id']
     )
     session = db.getSession(engine)
-    session.add(user)
+    session.add(message)
     session.commit()
     r_msg = {'msg':'Message Created!'}
     json_msg = json.dumps(r_msg)

@@ -32,13 +32,13 @@ $(function(){
             dataType: "number",
             allowEditing: false
         }, {
-            dataField: "Content"
+            dataField: "content"
         }, {
-            dataField: "Sent on"
+            dataField: "sent_on"
         }, {
-            dataField: "User from id"
+            dataField: "user_from_id"
         }, {
-            dataField: "User to id"
+            dataField: "user_to_id"
         }, ],
     }).dxDataGrid("instance");
 });
