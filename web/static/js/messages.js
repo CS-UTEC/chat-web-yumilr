@@ -3,13 +3,13 @@ $(function(){
     $("#grid").dxDataGrid({
         dataSource: DevExpress.data.AspNet.createStore({
             key: "id",
-            loadUrl: url,
-            insertUrl: url,
-            updateUrl: url,
-            deleteUrl: url,
+            loadUrl: url,   //get message
+            insertUrl: url, //post message
+            updateUrl: url, //put message
+            deleteUrl: url, //delete message
             onBeforeSend: function(method, ajaxOptions) {
                 ajaxOptions.xhrFields = { withCredentials: true };
-            }
+            } //convierto todo a json antes de enviarlo
         }),
 
         editing: {

@@ -12,7 +12,7 @@ function login(){
         success: function(data){
             console.log("Authenticated!");
             alert(data['msg']);
-
+            location.href="chat.html";
         },
         data: JSON.stringify(credentials)
     });

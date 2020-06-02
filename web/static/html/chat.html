@@ -6,26 +6,55 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <script src="/static/js/libs/bootstrap.min.js" ></script>
     <script src="/static/js/chat.js" ></script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
     <title>Chat</title>
+    <style>
+    body{
+      background: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica", "Arial";
+    }
+    #login_space{
+      height: 3vh;
+      width: 100%;
+    }
+    #contacts{
+      float: left;
+      width: 275px;
+      height: 100%;
+      border-right: 1px solid #000000;
+    }
+    #messages{
+      width: 100%;
+      height: 90vh;
+    }
+    #space-send-message{
+      float: inherit;
+      width: 100%;
+      height: 5vh;
+    }
+    </style>
 </head>
 <body>
-    <table width="100%" ,border="1px">
+  <div id="login_space" onclick="logout()"><p style="color:#4169E1;"><b>Logout</b></p></div> 
+    <table width="100%" style="height: 96vh;" border="1px">
         <tr>
         <td width="30%">
             <div id="current">
-            <label id="current_username"></label>
-                <button type="button" class="btn btn-primary" onclick="get_all_users()" >Get all users</button>
+                <button type="button" class="btn btn-primary" onclick="get_current_users()" >Get current users</button>
             </div>
             <div id="users"></div>
         </td>
-        <td width="30%">
-            <div id="current">
-            <label id="current_username"></label>
-                <button type="button" class="btn btn-primary" onclick="get_current()" >Get user</button>
+        <td width="70%">
+            <div id="messages">
             </div>
-            <div id="users"></div>
+            <div id="space-send-message">
+              <input type="text" style="width:80%" name="message" id="message" >
+              <button type="button" style="width:18%; height:5vh;" class="btn btn-primary" onclick="send()" >Send</button>
+            </div>
         </td>
-    </tr>
-</table>
-</body>
-</html>
+        </tr>
+      </table>
+    </body>
+    </html>

@@ -6,23 +6,40 @@
     <script src="../js/libs/bootstrap.min.js"></script>
     <script src="../js/login.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+    body{text-align: center;
+         vertical-align: center;}
+    table{
+      text-align: center;
+      vertical-align: center;
+      width: 100%;
+    }
+    .align-right{
+      text-align: right;
+      width: 45%;
+    }
+    .align-left{
+      text-align: left;
+    }
+    </style>
     <title>CS2B01</title>
 </head>
 <body>
-    <span class="badge badge-pill badge-success">Success</span>
-    <span class="badge badge-pill badge-danger">Unauthorized</span>
+    <h1>Login</h1>
+    <!-- <span class="badge badge-pill badge-success">Success</span>
+    <span class="badge badge-pill badge-danger">Unauthorized</span> -->
     <table>
         <tr>
-            <td>Username</td>
-            <td><input type="text" name="username" id="username"></td>
+            <td class="align-right">Username</td>
+            <td class="align-left"><input type="text" name="username" id="username"></td>
         </tr>
         <tr>
-            <td>Password</td>
-            <td><input type="password" name="password" id="password" ></td>
+            <td class="align-right">Password</td>
+            <td class="align-left"><input type="password" name="password" id="password" ></td>
         </tr>
         <tr>
             <td colspan="2">
-                <button onclick="login()" type="button" class="btn btn-primary">Login</button>
+                <button onclick="login()" type="button" class="btn btn-info">Login</button>
             </td>
         </tr>
     </table>
