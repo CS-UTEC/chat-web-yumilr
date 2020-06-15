@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <style>
     body{text-align: center;
-         vertical-align: center;}
+         vertical-align: center;
+         background-color: #ebebeb;}
     table{
       text-align: center;
       vertical-align: center;
@@ -16,29 +17,37 @@
     }
     .align-right{
       text-align: right;
+      font-family: Andika;
       width: 45%;
     }
     .align-left{
       text-align: left;
+      font-family: Andika;
+    }
+    .class{
+      font-family: Andika;
     }
     </style>
     <title>CS2B01</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Andika" />
+    <h1 class="class" style="font-size: 65px; color:#339499"><br><br><b>LOGIN</b></h1>
     <!-- <span class="badge badge-pill badge-success">Success</span>
     <span class="badge badge-pill badge-danger">Unauthorized</span> -->
     <table>
         <tr>
-            <td class="align-right">Username</td>
+            <td class="align-right" style="font-size: 20px;">Username: </td>
             <td class="align-left"><input type="text" name="username" id="username"></td>
         </tr>
+        <br>
         <tr>
-            <td class="align-right">Password</td>
+            <td class="align-right" style="font-size: 20px;">Password: </td>
             <td class="align-left"><input type="password" name="password" id="password" ></td>
         </tr>
         <tr>
             <td colspan="2">
+                <br>
                 <button onclick="login()" type="button" class="btn btn-info">Login</button>
             </td>
         </tr>

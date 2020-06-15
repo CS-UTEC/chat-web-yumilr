@@ -1,10 +1,6 @@
-//missing:  get current, get users, saludar(que ahora será igual a == get_messages)
-//get_messages: array en el que iterar
-
 var current_user;
 var user_to;
-//function get message, start chat
-//debo traer messages per user     (usando users from-id, users-to-id)
+
 function logout(){
   $.post({
       url:'/deauthenticate',
@@ -18,7 +14,6 @@ function logout(){
   });
 }
 
-
 function get_current_users(){
   get_current_user();
   $("#users").empty();
@@ -26,7 +21,8 @@ function get_current_users(){
   $.getJSON("/users", function(data){
     console.log(data);
     for(var i=0; i<data.length; i++){
-      var div='<br><div onclick="get_messages(this)">Username</div>';
+       var div='<br><div onclick="get_messages(this)">Username</div>';
+      // var div='<br><buttontype="button" class="btn btn-default" onclick="get_messages(this)">Username</button>';
       div = div.replace('Username', data[i]['username']);
       $("#users").append(div);
     }
@@ -52,8 +48,14 @@ function get_messages(a){
       if((current_user.username==data[i]['user_to_id'] && user_to==data[i]['user_from_id']) ||
          (current_user.username==data[i]['user_from_id'] && user_to==data[i]['user_to_id'])
         ){
-      var div='<br><div>Message</div>';
+          if(current_user.username==data[i]['user_from_id']){
+            var div='<br><div style="text-align:right">Message</div>';
+          }else{
+            var div='<br><div style="text-align:left">Message</div>';
+          }
+      //var div='<br><div>Message</div>';
       div = div.replace('Message', data[i]['content']);
+      console.log(div);
       $("#messages").append(div);
       }
     }
