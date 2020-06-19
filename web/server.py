@@ -134,8 +134,8 @@ def create_message():
     message = entities.Message(
         content=c['content'],
         # sent_on=datetime_str,
-        user_from_id=c['user_from_id']['username']['username'],
-        user_to_id=c['user_to_id']['username']['username']
+        user_from_id=c['user_from_id']['username']['id'],
+        user_to_id=c['user_to_id']['username']['id']
     )
     session = db.getSession(engine)
     session.add(message)
@@ -188,10 +188,15 @@ def update_message():
     id = request.form['key']
     message =session.query(entities.Message).filter(entities.Message.id == id).first()
     c = json.loads(request.form['values'])
+    print(c)
 
-    for key in c.keys():
-        setattr(message, key, c[key])
+    for key in c.keys(): #['content', 'user_from_id', 'user_to_id']
+        if key in ['user_to_id', 'user_from_id']:
+            setattr(message, key ,c[key]['username']['id'])
+        else:
+            setattr(message, key, c[key])   # 'content' -> message['content'] = c['content']
 
+    session.commit()
     return 'Updated Message!'
 
 @app.route('/messages', methods = ['DELETE'])
