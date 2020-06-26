@@ -25,6 +25,7 @@ def authenticate():
     msg = json.loads(request.data)
     db_session = db.getSession(engine)
     user = db_session.query(entities.User).filter(entities.User.username == msg['username'], entities.User.password == msg['password']).first()
+    db_session.close()
     #print(user.username)
     if user:
         r_msg = {'msg':'Welcome'}
@@ -62,6 +63,7 @@ def create_user():
     session = db.getSession(engine)
     session.add(user)
     session.commit()
+    session.close()
     #Response client
     r_msg = {'msg':'UserCreated'}
     json_msg = json.dumps(r_msg)
@@ -72,6 +74,7 @@ def create_user():
 def get_user(id):
     db_session = db.getSession(engine)
     users = db_session.query(entities.User).filter(entities.User.id == id)
+    db_session.close()
     for user in users:
         js = json.dumps(user, cls=connector.AlchemyEncoder)
         return  Response(js, status=200, mimetype='application/json')
@@ -83,6 +86,7 @@ def get_users():
     #consultar todos los usuarios
     session = db.getSession(engine)
     dbResponse = session.query(entities.User)
+    session.close()
     #convertir los usuarios a JSON
     data = dbResponse[:]
     #Responder al cliente
@@ -95,6 +99,7 @@ def update_user():
     session = db.getSession(engine)
     id = request.form['key']
     user = session.query(entities.User).filter(entities.User.id == id).first()
+    session.close()
     # actualizar los datos del usuario
     c = json.loads(request.form['values'])
     for key in c.keys():
@@ -112,6 +117,7 @@ def delete_user():
     user = session.query(entities.User).filter(entities.User.id == id).one()
     session.delete(user)
     session.commit()
+    session.close()
     # Response
     return "Deleted User"
 
@@ -121,6 +127,7 @@ def current_user():
     print(session)
     db_session = db.getSession(engine)
     user = db_session.query(entities.User).filter(entities.User.id == session['logged_user']).first()
+    db_session.close()
     # Devuelve el usuario loggea
     return Response(json.dumps(user, cls = connector.AlchemyEncoder), mimetype = 'application/json')
 
@@ -140,6 +147,7 @@ def create_message():
     session = db.getSession(engine)
     session.add(message)
     session.commit()
+    session.close()
     r_msg = {'msg':'Message Created!'}
     json_msg = json.dumps(r_msg)
     return Response(json_msg, status=201)
@@ -160,6 +168,7 @@ def create_messages_data():
     session = db.getSession(engine)
     session.add(message)
     session.commit()
+    session.close()
     r_msg = {'msg':'Message Created!'}
     json_msg = json.dumps(r_msg)
     return Response(json_msg, status=201)
@@ -169,6 +178,7 @@ def create_messages_data():
 def get_message(id):
     db_session = db.getSession(engine)
     messages = db_session.query(entities.Message).filter(entities.Message.id == id)
+    db_session.close()
     for user in messages:
         js = json.dumps(user, cls=connector.AlchemyEncoder)
         return  Response(js, status=200, mimetype='application/json')
@@ -179,6 +189,7 @@ def get_message(id):
 def get_messages():
     session = db.getSession(engine)
     dbResponse = session.query(entities.Message)
+    session.close()
     data = dbResponse[:]
     return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
 
@@ -197,6 +208,7 @@ def update_message():
             setattr(message, key, c[key])   # 'content' -> message['content'] = c['content']
 
     session.commit()
+    session.close()
     return 'Updated Message!'
 
 @app.route('/messages', methods = ['DELETE'])
@@ -206,6 +218,7 @@ def delete_message():
     message = session.query(entities.Message).filter(entities.Message.id == id).one()
     session.delete(message)
     session.commit()
+    session.close()
     return "Deleted Message!"
 
 if __name__ == '__main__':

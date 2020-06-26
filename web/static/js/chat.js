@@ -65,7 +65,8 @@ function get_messages(a){
   //  console.log(user_to);
 
   $.getJSON("/messages", function(data){
-    console.log(data);
+     $("#messages").empty();
+    //console.log(data);
     for(var i=0; i<data.length; i++){
       if((current_user.id==data[i]['user_to_id'] && user_to==data[i]['user_from_id']) ||
          (current_user.id==data[i]['user_from_id'] && user_to==data[i]['user_to_id'])
@@ -122,11 +123,12 @@ function send(){
 
 function lookup() {
     let value = $('#search').val();
-    console.log(value);
+    // console.log(value);
     let parent = $('#users');
     let hijos = parent.children(); //array de divs per user
     for(var i=0; i<hijos.length; i++) {
         var id = '#' + hijos[i].id;
+        // console.log(id);
         if(hijos[i].id.startsWith(value)) {
             if( $(id).hasClass('d-none')) {
                 $(id).removeClass('d-none');
