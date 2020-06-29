@@ -3,7 +3,7 @@ from database import connector
 from model import entities
 import json
 import time
-import datetime
+from datetime import datetime
 
 db = connector.Manager()
 engine = db.createEngine()
@@ -81,14 +81,28 @@ def get_user(id):
     message = { 'status': 404, 'message': 'Not Found'}
     return Response(json.dumps(message), status=404, mimetype='application/json')
 
+
+cache={}
+key_users='users'
+
+
 @app.route('/users', methods = ['GET'])
 def get_users():
-    #consultar todos los usuarios
-    session = db.getSession(engine)
-    dbResponse = session.query(entities.User)
-    session.close()
-    #convertir los usuarios a JSON
-    data = dbResponse[:]
+    data = []
+    #age_required=(cache[key_users]['time']-datetime.now()).total_seconds() < 5
+    #consultamos cache
+    if key_users in cache and (datetime.now()- cache[key_users]['time']).total_seconds() < 20:
+        #get cache
+        data =  cache[key_users]['data']
+    else:
+        #consultar todos los usuarios
+        session = db.getSession(engine)
+        dbResponse = session.query(entities.User)
+        session.close()
+        #convertir los usuarios a JSON
+        data = dbResponse[:]
+        #set cache{
+        cache[key_users] = {'data' : data, 'time' : datetime.now()}
     #Responder al cliente
     return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
 
@@ -185,12 +199,25 @@ def get_message(id):
     message = { 'status': 404, 'message': 'Not Found'}
     return Response(json.dumps(message), status=404, mimetype='application/json')
 
+key_messages='messages'
+
+
+
 @app.route('/messages', methods = ['GET'])
 def get_messages():
-    session = db.getSession(engine)
-    dbResponse = session.query(entities.Message)
-    session.close()
-    data = dbResponse[:]
+    data = []
+    #age_required=(cache[key_messages]['time']-datetime.now()).total_seconds() < 5
+    #consultamos cache
+    if key_users in cache and (datetime.now()- cache[key_users]['time']).total_seconds() < 40:
+        #get cache
+        data =  cache[key_users]['data']
+    else:
+        session = db.getSession(engine)
+        dbResponse = session.query(entities.Message)
+        session.close()
+        data = dbResponse[:]
+        #set cache{
+        cache[key_users] = {'data' : data, 'time' : datetime.now()}
     return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
 
 @app.route('/messages', methods = ['PUT'])
