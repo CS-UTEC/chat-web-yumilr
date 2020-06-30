@@ -1,9 +1,11 @@
 from flask import Flask,render_template, request, session, Response, redirect
+from datetime import datetime
 from database import connector
 from model import entities
 import json
 import time
-from datetime import datetime
+import threading
+
 
 db = connector.Manager()
 engine = db.createEngine()
@@ -199,7 +201,35 @@ def get_message(id):
     message = { 'status': 404, 'message': 'Not Found'}
     return Response(json.dumps(message), status=404, mimetype='application/json')
 
+
 key_messages='messages'
+
+
+@app.route('/messages/<u_id_from>/<u_id_to>', methods = ['GET'])
+def get_user_messages(u_id_from,u_id_to):
+    data = []
+
+    #age_required=(cache[key_messages]['time']-datetime.now()).total_seconds() < 5
+#    lock=threading.Lock()
+#    lock.acquire()
+    #consultamos cache
+    if key_users in cache and (datetime.now()- cache[key_users]['time']).total_seconds() < 0:
+        #get cache
+        data =  cache[key_users]['data']
+    else:
+        session = db.getSession(engine)
+        dbResponse = session.query(entities.Message).filter(entities.Message.user_from_id == u_id_from , entities.Message.user_to_id == u_id_to)
+        dbResponse2 = session.query(entities.Message).filter(entities.Message.user_from_id == u_id_to , entities.Message.user_to_id == u_id_from)
+        session.close()
+        data = dbResponse[:]
+        data2= dbResponse2[:]
+        data= data+data2
+        #set cache{
+        cache[key_users] = {'data' : data, 'time' : datetime.now()}
+#    lock.release()
+    return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
+
+
 
 
 
@@ -207,8 +237,10 @@ key_messages='messages'
 def get_messages():
     data = []
     #age_required=(cache[key_messages]['time']-datetime.now()).total_seconds() < 5
+    #lock=threading.Lock()
+    #lock.acquire()
     #consultamos cache
-    if key_users in cache and (datetime.now()- cache[key_users]['time']).total_seconds() < 40:
+    if key_users in cache and (datetime.now()- cache[key_users]['time']).total_seconds() < 20:
         #get cache
         data =  cache[key_users]['data']
     else:
@@ -218,7 +250,9 @@ def get_messages():
         data = dbResponse[:]
         #set cache{
         cache[key_users] = {'data' : data, 'time' : datetime.now()}
+    #lock.release()
     return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
+
 
 @app.route('/messages', methods = ['PUT'])
 def update_message():

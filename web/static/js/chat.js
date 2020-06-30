@@ -46,6 +46,7 @@ function get_current_user(){
   });
 }
 
+//TODO: optimize get messages
 function get_messages(a){
   $("#messages").empty();  //elemento con texto concatenado
   console.log("Voy a traer los mensajes");
@@ -64,36 +65,39 @@ function get_messages(a){
   $(a).addClass('active_chat');
   //  console.log(user_to);
 
-  $.getJSON("/messages", function(data){
+  $.getJSON("/messages/"+current_user.id+"/"+user_to, function(data){
      $("#messages").empty();
-    //console.log(data);
-    for(var i=0; i<data.length; i++){
-      if((current_user.id==data[i]['user_to_id'] && user_to==data[i]['user_from_id']) ||
-         (current_user.id==data[i]['user_from_id'] && user_to==data[i]['user_to_id'])
-        ){
-            var div='<div class="Message_type">'+
-            'image'+
-            '<div class="received_msg">'+
-            '<div class="received_withd_msg">'+
-            '<p>Message</p>'+
-            // '<span class="time_date"> 11:01 AM    |    June 9</span></div>'+
-                '</div>';
-          if(current_user.id==data[i]['user_from_id']){
-            div = div.replace('image', '');
-            div = div.replace('Message_type', 'outgoing_msg');
-            div = div.replace('received_msg', 'sent_msg');
-            div = div.replace('<div class="received_withd_msg">', '');
-          }else{
-            div = div.replace('image', '<div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>');
-            div = div.replace('Message_type', 'incoming_msg');
-            div = div+'</div>';
+    console.log(data);
+    if (data!=null){
+        for(var i=0; i<data.length; i++){
+          if((current_user.id==data[i]['user_to_id'] && user_to==data[i]['user_from_id']) ||
+             (current_user.id==data[i]['user_from_id'] && user_to==data[i]['user_to_id'])
+            ){
+                var div='<div class="Message_type">'+
+                'image'+
+                '<div class="received_msg">'+
+                '<div class="received_withd_msg">'+
+                '<p>Message</p>'+
+                // '<span class="time_date"> 11:01 AM    |    June 9</span></div>'+
+                    '</div>';
+              if(current_user.id==data[i]['user_from_id']){
+                div = div.replace('image', '');
+                div = div.replace('Message_type', 'outgoing_msg');
+                div = div.replace('received_msg', 'sent_msg');
+                div = div.replace('<div class="received_withd_msg">', '');
+              }else{
+                div = div.replace('image', '<div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>');
+                div = div.replace('Message_type', 'incoming_msg');
+                div = div+'</div>';
+              }
+          //var div='<br><div>Message</div>';
+          div = div.replace('Message', data[i]['content']);
+        //  console.log(div);
+          $("#messages").append(div);
           }
-      //var div='<br><div>Message</div>';
-      div = div.replace('Message', data[i]['content']);
-    //  console.log(div);
-      $("#messages").append(div);
-      }
+        }        
     }
+
   });
 }
 
@@ -101,7 +105,7 @@ function send(){
   console.log("Sending Message");
   var message = $('#message').val();  // getting password by id
 
-  var mssg = {'content':message, 'sent_on':"23/04/2004", 'user_from_id':current_user.id, 'user_to_id':user_to};
+  var mssg = {'content':message, 'sent_on':"23/04/2", 'user_from_id':current_user.id, 'user_to_id':user_to};
   console.log(mssg);
   $.post({
       url:'/messages_json',
